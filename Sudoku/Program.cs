@@ -60,7 +60,7 @@ namespace Sudoku
         {
             try
             {
-                var grid = test3;
+                var grid = test2;
                 grid.Solve();
             }
             catch (Exception e)

@@ -68,10 +68,12 @@ namespace Sudoku
 
         public void Solve()
         {
+            var sw = new Stopwatch();
             counter_ = 0;
             solutions_ = 0;
+            sw.Restart();
             SolveInternal();
-            Console.WriteLine($"counter={counter_} solutions={solutions_}");
+            Console.WriteLine($"counter={counter_} solutions={solutions_} Elapsed={sw.ElapsedMilliseconds} ms");
         }
 
         private void SolveInternal()
