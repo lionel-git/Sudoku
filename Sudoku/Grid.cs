@@ -9,6 +9,7 @@ namespace Sudoku
     {
         private byte[,] datas_;
         private long counter_;
+        private long solutions_;
 
         // csv separated 0 to 9, 0 = empty
         public Grid(List<string> valuesArray = null)
@@ -68,8 +69,9 @@ namespace Sudoku
         public void Solve()
         {
             counter_ = 0;
+            solutions_ = 0;
             SolveInternal();
-            Console.WriteLine($"counter={counter_}");
+            Console.WriteLine($"counter={counter_} solutions={solutions_}");
         }
 
         private void SolveInternal()
@@ -99,6 +101,11 @@ namespace Sudoku
             }
             Console.WriteLine("Solution");
             Console.WriteLine(this);
+            var isValid = IsValid();
+            Console.WriteLine($"Isvalid={isValid}");
+            if (!isValid)
+                throw new Exception("Invalid solution???");
+            solutions_++;
         }
 
         public override string ToString()
@@ -114,6 +121,52 @@ namespace Sudoku
                  sb.AppendLine();
             }
             return sb.ToString();
+        }
+
+        private bool IsValidCount(int[] counts)
+        {
+            if (counts[0] != 0)
+                return false;
+            for (int k = 1; k <= 9; k++)
+                if (counts[k] != 1)
+                    return false;
+            return true;
+        }
+
+        private bool IsValid(int i, int j, int di, int dj)
+        {
+            int[] counts = new int[10];
+            for (int k = 0; k < 9; k++)
+            {
+                counts[datas_[i + k * di, j + k * dj]]++;
+            }
+            return IsValidCount(counts);
+        }
+
+        private bool IsValidSquare(int i, int j)
+        {
+            int[] counts = new int[10];
+            for (int n = 3*i; n < 3*i + 3; n++)
+                for (int m = 3*j; m < 3*j + 3; m++)
+                    counts[datas_[n,m]]++;
+            return IsValidCount(counts);
+        }
+
+        public bool IsValid()
+        {
+            for (int k = 0; k < 9; k++)
+            {
+                if (!IsValid(k, 0, 0, +1))
+                    return false;
+                if (!IsValid(0, k, +1, 0))
+                    return false;
+            }
+
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    if (!IsValidSquare(i, j))
+                        return false;
+            return true;
         }
     }
 }
